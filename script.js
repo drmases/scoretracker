@@ -63,6 +63,10 @@
   }
 
   function nextColor() {
+    var used = state.players.map(function (p) { return p.color; });
+    for (var i = 0; i < PLAYER_COLORS.length; i++) {
+      if (used.indexOf(PLAYER_COLORS[i]) === -1) return PLAYER_COLORS[i];
+    }
     return PLAYER_COLORS[state.players.length % PLAYER_COLORS.length];
   }
 
@@ -88,8 +92,8 @@
   var clearPlayersBtn = document.getElementById('clearPlayersBtn');
   var saveBtn = document.getElementById('saveBtn');
   var historyBtn = document.getElementById('historyBtn');
-  var roundsToggleBtn = document.getElementById('roundsToggleBtn');
-  var colorsToggleBtn = document.getElementById('colorsToggleBtn');
+  var roundsToggleInput = document.getElementById('roundsToggleInput');
+  var colorsToggleInput = document.getElementById('colorsToggleInput');
 
   var historyOverlay = document.getElementById('historyOverlay');
   var historyPanel = document.getElementById('historyPanel');
@@ -102,13 +106,20 @@
   var confirmYesBtn = document.getElementById('confirmYes');
   var confirmNoBtn = document.getElementById('confirmNo');
 
+  var playerEditOverlay = document.getElementById('playerEditOverlay');
+  var playerEditModal = document.getElementById('playerEditModal');
+  var playerEditTitle = document.getElementById('playerEditTitle');
+  var colorSwatchGrid = document.getElementById('colorSwatchGrid');
+  var playerEditDeleteBtn = document.getElementById('playerEditDeleteBtn');
+  var playerEditCloseBtn = document.getElementById('playerEditCloseBtn');
+
   // ---------- rendering ----------
   function render() {
     gameNameInput.value = state.gameName;
     appEl.classList.toggle('rounds-off', !state.roundsEnabled);
     appEl.classList.toggle('colors-off', !state.colorsEnabled);
-    roundsToggleBtn.classList.toggle('active-state', state.roundsEnabled);
-    colorsToggleBtn.classList.toggle('active-state', state.colorsEnabled);
+    roundsToggleInput.checked = state.roundsEnabled;
+    colorsToggleInput.checked = state.colorsEnabled;
 
     var displayRound = state.roundsEnabled ? state.activeRound : 0;
     roundNumberEl.textContent = String(displayRound + 1);
@@ -136,37 +147,39 @@
     var wrap = document.createElement('div');
     wrap.className = 'player-name-wrap';
 
-    var labelRow = document.createElement('div');
-    labelRow.className = 'player-label-row';
-
     var label = document.createElement('span');
     label.className = 'player-index';
     label.textContent = 'Player ' + (idx + 1);
-    labelRow.appendChild(label);
 
-    var removeBtn = document.createElement('button');
-    removeBtn.className = 'remove-player-btn';
-    removeBtn.type = 'button';
-    removeBtn.textContent = '×';
-    removeBtn.setAttribute('aria-label', 'Remove player');
-    removeBtn.addEventListener('click', function () {
-      state.players.splice(idx, 1);
-      render();
-    });
-    labelRow.appendChild(removeBtn);
+    var nameRow = document.createElement('div');
+    nameRow.className = 'player-name-row';
 
     var nameInput = document.createElement('input');
     nameInput.className = 'player-name-input';
     nameInput.type = 'text';
     nameInput.placeholder = 'Player ' + (idx + 1);
     nameInput.value = player.name;
+    nameInput.size = Math.max(player.name.length, nameInput.placeholder.length, 2);
     nameInput.addEventListener('input', function () {
       player.name = nameInput.value;
+      nameInput.size = Math.max(nameInput.value.length, nameInput.placeholder.length, 2);
       saveSession();
     });
 
-    wrap.appendChild(labelRow);
-    wrap.appendChild(nameInput);
+    var editBtn = document.createElement('button');
+    editBtn.className = 'edit-player-btn';
+    editBtn.type = 'button';
+    editBtn.textContent = '✎';
+    editBtn.setAttribute('aria-label', 'Edit player');
+    editBtn.addEventListener('click', function () {
+      openPlayerEdit(idx);
+    });
+
+    nameRow.appendChild(nameInput);
+    nameRow.appendChild(editBtn);
+
+    wrap.appendChild(label);
+    wrap.appendChild(nameRow);
     gameCol.appendChild(wrap);
 
     row.appendChild(gameCol);
@@ -331,6 +344,50 @@
   });
   confirmOverlay.addEventListener('click', closeConfirm);
 
+  // ---------- player edit modal ----------
+  function renderColorSwatches(idx) {
+    var player = state.players[idx];
+    colorSwatchGrid.innerHTML = '';
+    PLAYER_COLORS.forEach(function (color) {
+      var takenByOther = state.players.some(function (p, i) { return i !== idx && p.color === color; });
+      var swatch = document.createElement('button');
+      swatch.type = 'button';
+      swatch.className = 'color-swatch' + (color === player.color ? ' selected' : '') + (takenByOther ? ' taken' : '');
+      swatch.style.background = color;
+      swatch.disabled = takenByOther;
+      swatch.setAttribute('aria-label', 'Choose color');
+      swatch.addEventListener('click', function () {
+        player.color = color;
+        render();
+        closePlayerEdit();
+      });
+      colorSwatchGrid.appendChild(swatch);
+    });
+  }
+
+  function openPlayerEdit(idx) {
+    var player = state.players[idx];
+    playerEditTitle.textContent = player.name.trim() || ('Player ' + (idx + 1));
+    renderColorSwatches(idx);
+    playerEditDeleteBtn.onclick = function () {
+      showConfirm('Delete this player?', function () {
+        state.players.splice(idx, 1);
+        render();
+        closePlayerEdit();
+      });
+    };
+    playerEditModal.classList.add('open');
+    playerEditOverlay.classList.add('open');
+  }
+
+  function closePlayerEdit() {
+    playerEditModal.classList.remove('open');
+    playerEditOverlay.classList.remove('open');
+  }
+
+  playerEditCloseBtn.addEventListener('click', closePlayerEdit);
+  playerEditOverlay.addEventListener('click', closePlayerEdit);
+
   // ---------- actions ----------
   function doClearAll() {
     showConfirm('Clear players and scores?', function () {
@@ -477,8 +534,8 @@
   clearPlayersBtn.addEventListener('click', doClearPlayers);
   saveBtn.addEventListener('click', doSave);
   historyBtn.addEventListener('click', openHistoryPanel);
-  roundsToggleBtn.addEventListener('click', doToggleRounds);
-  colorsToggleBtn.addEventListener('click', doToggleColors);
+  roundsToggleInput.addEventListener('change', doToggleRounds);
+  colorsToggleInput.addEventListener('change', doToggleColors);
 
   historyOverlay.addEventListener('click', closeHistoryPanel);
   historyCloseBtn.addEventListener('click', closeHistoryPanel);

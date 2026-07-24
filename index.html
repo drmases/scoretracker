@@ -48,8 +48,20 @@
 
       <div class="drawer-section">
         <h3 class="drawer-heading">View</h3>
-        <button id="roundsToggleBtn" class="drawer-item">Rounds On/Off</button>
-        <button id="colorsToggleBtn" class="drawer-item">Colors On/Off</button>
+        <label class="switch-row">
+          <span class="switch-label">Rounds</span>
+          <span class="switch">
+            <input type="checkbox" id="roundsToggleInput" class="switch-input">
+            <span class="switch-slider"></span>
+          </span>
+        </label>
+        <label class="switch-row">
+          <span class="switch-label">Colors</span>
+          <span class="switch">
+            <input type="checkbox" id="colorsToggleInput" class="switch-input">
+            <span class="switch-slider"></span>
+          </span>
+        </label>
       </div>
 
       <button id="saveBtn" class="drawer-action">Save Game</button>
@@ -73,6 +85,14 @@
       <button id="confirmYes" class="confirm-btn confirm-yes">Yes</button>
       <button id="confirmNo" class="confirm-btn confirm-no">No</button>
     </div>
+  </div>
+
+  <div id="playerEditOverlay" class="drawer-overlay"></div>
+  <div id="playerEditModal" class="player-edit-modal">
+    <h3 id="playerEditTitle" class="player-edit-title">Player</h3>
+    <div id="colorSwatchGrid" class="color-swatch-grid"></div>
+    <button id="playerEditDeleteBtn" class="player-edit-delete-btn">Delete Player</button>
+    <button id="playerEditCloseBtn" class="player-edit-close-btn">Close</button>
   </div>
 </div>
 
