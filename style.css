@@ -572,9 +572,6 @@ html, body {
   font-weight: 700;
 }
 
-.history-player-row.winner {
-  box-shadow: 0 0 0 2px gold inset;
-}
 
 .history-empty {
   opacity: 0.6;
