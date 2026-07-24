@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /c/Users/jonas/claude_projects/scoretracker 2>&1; echo \"---\"; ls /c/Users/jonas/claude_projects/)",
+      "Bash(git -C \"/c/Users/jonas/claude_projects/marvel_legendary_stats\" rev-parse --is-inside-work-tree)",
+      "Bash(git -C \"/c/Users/jonas/claude_projects/necromunda-gang-manager\" rev-parse --is-inside-work-tree)",
+      "Bash(git -C \"/c/Users/jonas/claude_projects/globbin_startpage\" rev-parse --is-inside-work-tree)",
+      "Bash(git -C \"/c/Users/jonas/claude_projects/plum_island_horror_tracks\" rev-parse --is-inside-work-tree)"
+    ]
+  }
+}

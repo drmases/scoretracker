@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Scoretracker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+  <div id="board">
+    <div id="headerRow" class="row header-row">
+      <div class="col col-game">
+        <input id="gameNameInput" type="text" placeholder="Game name" autocomplete="off">
+      </div>
+      <div class="col col-round">
+        <div class="round-stepper">
+          <button id="roundMinus" class="step-btn" aria-label="Previous round">&minus;</button>
+          <span id="roundNumber" class="round-number">1</span>
+          <button id="roundPlus" class="step-btn" aria-label="Next round">+</button>
+        </div>
+      </div>
+      <div class="col col-score header-label">Score</div>
+      <div class="col col-total header-label">Total Score</div>
+    </div>
+
+    <div id="playerRows"></div>
+
+    <button id="addPlayerBtn" class="add-player-btn">
+      <span class="plus">+</span> Add Player
+    </button>
+  </div>
+
+  <button id="drawerTab" class="drawer-tab" aria-label="Open menu">Menu</button>
+
+  <div id="drawerOverlay" class="drawer-overlay"></div>
+  <div id="drawer" class="drawer">
+    <button id="clearBtn" class="drawer-btn drawer-clear">Clear</button>
+    <button id="saveBtn" class="drawer-btn drawer-save">Save</button>
+    <button id="historyBtn" class="drawer-btn drawer-history">History</button>
+    <button id="viewBtn" class="drawer-btn drawer-view">View: Rounds ON</button>
+  </div>
+
+  <div id="historyOverlay" class="drawer-overlay"></div>
+  <div id="historyPanel" class="history-panel">
+    <div class="history-panel-header">
+      <h2>History</h2>
+      <button id="historyCloseBtn" class="history-close-btn" aria-label="Close history">&times;</button>
+    </div>
+    <div id="historyList" class="history-list"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
