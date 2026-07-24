@@ -26,38 +26,56 @@ html, body {
   color: var(--text-light);
   font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
   overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 #app {
   position: relative;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   padding-right: 44px; /* room for drawer tab */
 }
 
 #board {
   display: flex;
   flex-direction: column;
+  height: 100%;
+}
+
+#playerRows {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-bottom: 64px; /* clearance for the floating add-player button */
 }
 
 .row {
   display: grid;
   grid-template-columns: minmax(140px, 1.6fr) minmax(160px, 2fr) minmax(150px, 1.6fr) minmax(110px, 1fr);
   align-items: stretch;
-  min-height: 64px;
-  border-bottom: 2px solid var(--darker);
+  min-height: 46px;
+  border-bottom: 1px solid var(--darker);
+  flex: 0 0 auto;
+}
+
+.player-row {
+  flex: 1 1 0;
 }
 
 .header-row {
   background: var(--header-bg);
   font-weight: 700;
-  font-size: 1.3rem;
-  min-height: 56px;
+  font-size: 1.1rem;
+  min-height: 34px;
+  flex: 0 0 auto;
 }
 
 .col {
   display: flex;
   align-items: center;
-  padding: 6px 10px;
+  padding: 2px 8px;
   min-width: 0;
 }
 
@@ -72,9 +90,9 @@ html, body {
   border: none;
   border-bottom: 2px dashed rgba(255,255,255,0.4);
   color: var(--text-light);
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 700;
-  padding: 4px 2px;
+  padding: 2px;
   outline: none;
 }
 #gameNameInput::placeholder { color: rgba(255,255,255,0.55); }
@@ -83,25 +101,25 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
 }
 
 .round-number {
   min-width: 2ch;
   text-align: center;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 800;
 }
 
 .step-btn {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   border: none;
   background: rgba(255,255,255,0.18);
   color: var(--text-light);
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 800;
   line-height: 1;
   cursor: pointer;
@@ -122,12 +140,18 @@ html, body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 2px;
+  gap: 0;
   width: 100%;
 }
 
+.player-label-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
 .player-index {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   opacity: 0.65;
   text-transform: uppercase;
@@ -139,28 +163,29 @@ html, body {
   background: transparent;
   border: none;
   color: #111;
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   font-weight: 800;
   padding: 0;
   outline: none;
+  line-height: 1.15;
 }
 .player-name-input::placeholder { color: rgba(0,0,0,0.5); }
 
 .round-history {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
   align-items: center;
   width: 100%;
 }
 
 .round-chip {
-  min-width: 26px;
-  padding: 3px 6px;
-  border-radius: 8px;
+  min-width: 22px;
+  padding: 2px 5px;
+  border-radius: 7px;
   background: rgba(0,0,0,0.12);
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   text-align: center;
 }
 
@@ -180,18 +205,18 @@ html, body {
 .score-value {
   min-width: 2.5ch;
   text-align: center;
-  font-size: 2.1rem;
+  font-size: 2.4rem;
   font-weight: 900;
 }
 
 .score-step-btn {
-  width: 44px;
-  height: 44px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   border: none;
   background: rgba(0,0,0,0.2);
   color: #111;
-  font-size: 1.6rem;
+  font-size: 1.3rem;
   font-weight: 900;
   cursor: pointer;
   display: flex;
@@ -207,7 +232,7 @@ html, body {
 }
 
 .total-value {
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 900;
   color: #111;
   text-align: center;
@@ -215,44 +240,45 @@ html, body {
 }
 
 .remove-player-btn {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   border: none;
   background: rgba(0,0,0,0.25);
   color: #fff;
-  font-size: 0.85rem;
+  font-size: 0.7rem;
   line-height: 1;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.player-row .col.col-game {
-  position: relative;
+  flex-shrink: 0;
 }
 
 .add-player-btn {
-  margin: 16px;
-  padding: 16px 20px;
-  font-size: 1.2rem;
+  position: fixed;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 10px 20px;
+  font-size: 1rem;
   font-weight: 800;
-  border: 2px dashed rgba(255,255,255,0.4);
-  border-radius: 12px;
-  background: transparent;
+  border: none;
+  border-radius: 999px;
+  background: var(--header-bg);
   color: var(--text-light);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  z-index: 20;
+  touch-action: manipulation;
 }
-.add-player-btn:active { background: rgba(255,255,255,0.1); }
-.add-player-btn .plus { font-size: 1.4rem; }
+.add-player-btn:active { background: rgba(255,255,255,0.15); }
+.add-player-btn .plus { font-size: 1.2rem; }
 
 /* rounds-disabled mode */
 #app.rounds-off .col-round { display: none; }
@@ -429,9 +455,10 @@ html, body {
 }
 
 /* landscape-mobile friendly: keep header/rows compact on short viewports */
-@media (max-height: 480px) {
-  .row { min-height: 54px; }
-  .score-value { font-size: 1.6rem; }
-  .total-value { font-size: 1.7rem; }
-  .add-player-btn { margin: 10px; padding: 10px 14px; }
+@media (max-height: 420px) {
+  .row { min-height: 40px; }
+  .player-name-input { font-size: 1.4rem; }
+  .score-value { font-size: 2rem; }
+  .total-value { font-size: 2rem; }
+  .add-player-btn { margin: 6px 10px; padding: 8px 12px; }
 }

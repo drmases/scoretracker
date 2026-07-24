@@ -116,9 +116,24 @@
     var wrap = document.createElement('div');
     wrap.className = 'player-name-wrap';
 
-    var label = document.createElement('div');
+    var labelRow = document.createElement('div');
+    labelRow.className = 'player-label-row';
+
+    var label = document.createElement('span');
     label.className = 'player-index';
     label.textContent = 'Player ' + (idx + 1);
+    labelRow.appendChild(label);
+
+    var removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-player-btn';
+    removeBtn.type = 'button';
+    removeBtn.textContent = '×';
+    removeBtn.setAttribute('aria-label', 'Remove player');
+    removeBtn.addEventListener('click', function () {
+      state.players.splice(idx, 1);
+      render();
+    });
+    labelRow.appendChild(removeBtn);
 
     var nameInput = document.createElement('input');
     nameInput.className = 'player-name-input';
@@ -130,20 +145,9 @@
       saveSession();
     });
 
-    wrap.appendChild(label);
+    wrap.appendChild(labelRow);
     wrap.appendChild(nameInput);
     gameCol.appendChild(wrap);
-
-    var removeBtn = document.createElement('button');
-    removeBtn.className = 'remove-player-btn';
-    removeBtn.type = 'button';
-    removeBtn.textContent = '×';
-    removeBtn.setAttribute('aria-label', 'Remove player');
-    removeBtn.addEventListener('click', function () {
-      state.players.splice(idx, 1);
-      render();
-    });
-    gameCol.appendChild(removeBtn);
 
     row.appendChild(gameCol);
 
