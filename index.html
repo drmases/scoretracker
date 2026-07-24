@@ -37,10 +37,24 @@
   <div id="drawerOverlay" class="drawer-overlay"></div>
   <div id="drawer" class="drawer">
     <button id="drawerTab" class="drawer-tab" aria-label="Open menu"><span id="drawerTabIcon" class="drawer-tab-icon">&#8249;</span></button>
-    <button id="clearBtn" class="drawer-btn drawer-clear">Clear</button>
-    <button id="saveBtn" class="drawer-btn drawer-save">Save</button>
-    <button id="historyBtn" class="drawer-btn drawer-history">History</button>
-    <button id="viewBtn" class="drawer-btn drawer-view">View: Rounds ON</button>
+
+    <div class="drawer-content">
+      <div class="drawer-section">
+        <h3 class="drawer-heading">Clear</h3>
+        <button id="clearAllBtn" class="drawer-item">Clear All</button>
+        <button id="clearResultBtn" class="drawer-item">Clear Result</button>
+        <button id="clearPlayersBtn" class="drawer-item">Clear Players</button>
+      </div>
+
+      <div class="drawer-section">
+        <h3 class="drawer-heading">View</h3>
+        <button id="roundsToggleBtn" class="drawer-item">Rounds On/Off</button>
+        <button id="colorsToggleBtn" class="drawer-item">Colors On/Off</button>
+      </div>
+
+      <button id="saveBtn" class="drawer-action">Save Game</button>
+      <button id="historyBtn" class="drawer-action">History</button>
+    </div>
   </div>
 
   <div id="historyOverlay" class="drawer-overlay"></div>

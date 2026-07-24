@@ -77,6 +77,10 @@ html, body {
   min-width: 0;
 }
 
+.col-game {
+  padding-left: 16px;
+}
+
 .header-label {
   justify-content: center;
   text-align: center;
@@ -181,6 +185,7 @@ html, body {
   color: #111;
   font-size: var(--player-name-size, 2.5rem);
   font-weight: 800;
+  letter-spacing: -0.05em;
   padding: 0;
   outline: none;
   line-height: 1.4;
@@ -212,6 +217,7 @@ html, body {
 
 .round-chip.active {
   background: rgba(255,255,255,0.85);
+  color: #111;
 }
 
 .score-stepper {
@@ -277,11 +283,11 @@ html, body {
 
 .add-player-btn {
   position: fixed;
-  left: 35%;
-  bottom: 8px;
+  left: 42%;
+  bottom: 2px;
   transform: translateX(-50%);
   margin: 0;
-  padding: 8px 18px;
+  padding: 4px 12px;
   font-size: 0.95rem;
   font-weight: 800;
   border: none;
@@ -303,7 +309,16 @@ html, body {
 
 /* rounds-disabled mode */
 #app.rounds-off .col-round { display: none; }
-#app.rounds-off .row { grid-template-columns: minmax(160px, 1.8fr) minmax(180px, 2fr) minmax(120px, 1fr); }
+#app.rounds-off .col-total { display: none; }
+#app.rounds-off .round-stepper { display: none; }
+#app.rounds-off .row { grid-template-columns: minmax(200px, 3fr) minmax(150px, 1fr); }
+#app.rounds-off .score-stepper { justify-content: flex-end; padding-right: 10px; }
+
+/* colors-disabled mode: neutral row backgrounds (set in JS), just fix text contrast here */
+#app.colors-off .player-row { color: var(--text-light); }
+#app.colors-off .player-name-input { color: var(--text-light); }
+#app.colors-off .player-name-input::placeholder { color: rgba(255,255,255,0.5); }
+#app.colors-off .score-step-btn { color: var(--text-light); }
 
 /* drawer tab: lives inside .drawer so it slides out together with it */
 .drawer-tab {
@@ -311,15 +326,14 @@ html, body {
   top: 50%;
   left: -20px;
   transform: translateY(-50%);
-  width: 20px;
+  width: 22px;
   height: 64px;
-  padding: 0;
+  padding: 0 2px 0 0;
   background: var(--panel);
   color: var(--text-light);
   border: none;
   border-radius: 10px 0 0 10px;
   cursor: pointer;
-  opacity: 0.94;
   touch-action: manipulation;
   display: flex;
   align-items: center;
@@ -364,26 +378,64 @@ html, body {
   z-index: 40;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 24px 16px;
 }
 .drawer.open { transform: translateX(0); }
 
-.drawer-btn {
-  padding: 16px;
-  font-size: 1.1rem;
+.drawer-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px 16px;
+}
+
+.drawer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.drawer-heading {
+  margin: 0;
+  font-size: 0.7rem;
   font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.55;
+  color: var(--text-light);
+}
+
+.drawer-item {
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
   border: none;
-  border-radius: 10px;
-  color: #fff;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  color: var(--text-light);
   cursor: pointer;
   text-align: left;
 }
-.drawer-clear { background: #a02b2b; }
-.drawer-save { background: #2b8a3e; }
-.drawer-history { background: #1f6fb2; }
-.drawer-view { background: #6a4fb0; }
-.drawer-btn:active { filter: brightness(1.15); }
+.drawer-item:active { background: rgba(255,255,255,0.16); }
+.drawer-item.active-state {
+  background: rgba(255,255,255,0.14);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.3);
+}
+
+.drawer-action {
+  padding: 10px 12px;
+  font-size: 1rem;
+  font-weight: 800;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.08);
+  color: var(--text-light);
+  cursor: pointer;
+  text-align: left;
+}
+.drawer-action:active { background: rgba(255,255,255,0.18); }
 
 /* history panel */
 .history-panel {
@@ -394,7 +446,6 @@ html, body {
   width: 320px;
   max-width: 90vw;
   background: var(--panel);
-  box-shadow: -4px 0 16px rgba(0,0,0,0.5);
   transform: translateX(100%);
   transition: transform 0.25s ease;
   z-index: 45;

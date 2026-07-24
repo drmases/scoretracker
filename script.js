@@ -8,11 +8,13 @@
     '#e8352f', '#f2c41e', '#3fa64c', '#1f6fb2',
     '#7c3fc4', '#d13c8e', '#1fa898', '#c7a419'
   ];
+  var NEUTRAL_ROW_COLOR = '#4d4d4d';
 
   function defaultSession() {
     return {
       gameName: '',
       roundsEnabled: true,
+      colorsEnabled: true,
       roundsCreated: 1,
       activeRound: 0,
       players: []
@@ -81,10 +83,13 @@
   var drawerTab = document.getElementById('drawerTab');
   var drawer = document.getElementById('drawer');
   var drawerOverlay = document.getElementById('drawerOverlay');
-  var clearBtn = document.getElementById('clearBtn');
+  var clearAllBtn = document.getElementById('clearAllBtn');
+  var clearResultBtn = document.getElementById('clearResultBtn');
+  var clearPlayersBtn = document.getElementById('clearPlayersBtn');
   var saveBtn = document.getElementById('saveBtn');
   var historyBtn = document.getElementById('historyBtn');
-  var viewBtn = document.getElementById('viewBtn');
+  var roundsToggleBtn = document.getElementById('roundsToggleBtn');
+  var colorsToggleBtn = document.getElementById('colorsToggleBtn');
 
   var historyOverlay = document.getElementById('historyOverlay');
   var historyPanel = document.getElementById('historyPanel');
@@ -101,7 +106,9 @@
   function render() {
     gameNameInput.value = state.gameName;
     appEl.classList.toggle('rounds-off', !state.roundsEnabled);
-    viewBtn.textContent = 'View: Rounds ' + (state.roundsEnabled ? 'ON' : 'OFF');
+    appEl.classList.toggle('colors-off', !state.colorsEnabled);
+    roundsToggleBtn.classList.toggle('active-state', state.roundsEnabled);
+    colorsToggleBtn.classList.toggle('active-state', state.colorsEnabled);
 
     var displayRound = state.roundsEnabled ? state.activeRound : 0;
     roundNumberEl.textContent = String(displayRound + 1);
@@ -120,7 +127,7 @@
   function renderPlayerRow(player, idx) {
     var row = document.createElement('div');
     row.className = 'row player-row';
-    row.style.background = player.color;
+    row.style.background = state.colorsEnabled ? player.color : NEUTRAL_ROW_COLOR;
 
     // Game/player-name column
     var gameCol = document.createElement('div');
@@ -325,11 +332,34 @@
   confirmOverlay.addEventListener('click', closeConfirm);
 
   // ---------- actions ----------
-  function doClear() {
-    if (!confirm('Clear the current board? This cannot be undone.')) return;
-    state = defaultSession();
-    render();
-    closeDrawer();
+  function doClearAll() {
+    showConfirm('Clear players and scores?', function () {
+      var roundsEnabled = state.roundsEnabled;
+      var colorsEnabled = state.colorsEnabled;
+      state = defaultSession();
+      state.roundsEnabled = roundsEnabled;
+      state.colorsEnabled = colorsEnabled;
+      render();
+      closeDrawer();
+    });
+  }
+
+  function doClearResult() {
+    showConfirm('Clear all scores?', function () {
+      state.roundsCreated = 1;
+      state.activeRound = 0;
+      state.players.forEach(function (p) { p.rounds = [0]; });
+      render();
+      closeDrawer();
+    });
+  }
+
+  function doClearPlayers() {
+    showConfirm('Remove all players?', function () {
+      state.players = [];
+      render();
+      closeDrawer();
+    });
   }
 
   function doSave() {
@@ -351,8 +381,13 @@
     openHistoryPanel();
   }
 
-  function doToggleView() {
+  function doToggleRounds() {
     state.roundsEnabled = !state.roundsEnabled;
+    render();
+  }
+
+  function doToggleColors() {
+    state.colorsEnabled = !state.colorsEnabled;
     render();
   }
 
@@ -437,10 +472,13 @@
     }
   });
   drawerOverlay.addEventListener('click', closeDrawer);
-  clearBtn.addEventListener('click', doClear);
+  clearAllBtn.addEventListener('click', doClearAll);
+  clearResultBtn.addEventListener('click', doClearResult);
+  clearPlayersBtn.addEventListener('click', doClearPlayers);
   saveBtn.addEventListener('click', doSave);
   historyBtn.addEventListener('click', openHistoryPanel);
-  viewBtn.addEventListener('click', doToggleView);
+  roundsToggleBtn.addEventListener('click', doToggleRounds);
+  colorsToggleBtn.addEventListener('click', doToggleColors);
 
   historyOverlay.addEventListener('click', closeHistoryPanel);
   historyCloseBtn.addEventListener('click', closeHistoryPanel);
