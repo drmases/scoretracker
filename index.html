@@ -15,13 +15,15 @@
         <input id="gameNameInput" type="text" placeholder="Game name" autocomplete="off">
       </div>
       <div class="col col-round">
+        <span class="round-stepper-label">Score Round</span>
+      </div>
+      <div class="col col-score">
         <div class="round-stepper">
-          <button id="roundMinus" class="step-btn" aria-label="Previous round">&minus;</button>
+          <button id="roundMinus" class="step-btn" aria-label="Delete round">&minus;</button>
           <span id="roundNumber" class="round-number">1</span>
           <button id="roundPlus" class="step-btn" aria-label="Next round">+</button>
         </div>
       </div>
-      <div class="col col-score header-label">Score</div>
       <div class="col col-total header-label">Total Score</div>
     </div>
 
@@ -32,10 +34,9 @@
     </button>
   </div>
 
-  <button id="drawerTab" class="drawer-tab" aria-label="Open menu">Menu</button>
-
   <div id="drawerOverlay" class="drawer-overlay"></div>
   <div id="drawer" class="drawer">
+    <button id="drawerTab" class="drawer-tab" aria-label="Open menu"><span id="drawerTabIcon" class="drawer-tab-icon">&#8249;</span></button>
     <button id="clearBtn" class="drawer-btn drawer-clear">Clear</button>
     <button id="saveBtn" class="drawer-btn drawer-save">Save</button>
     <button id="historyBtn" class="drawer-btn drawer-history">History</button>
@@ -49,6 +50,15 @@
       <button id="historyCloseBtn" class="history-close-btn" aria-label="Close history">&times;</button>
     </div>
     <div id="historyList" class="history-list"></div>
+  </div>
+
+  <div id="confirmOverlay" class="drawer-overlay"></div>
+  <div id="confirmModal" class="confirm-modal">
+    <p id="confirmMessage" class="confirm-message"></p>
+    <div class="confirm-actions">
+      <button id="confirmYes" class="confirm-btn confirm-yes">Yes</button>
+      <button id="confirmNo" class="confirm-btn confirm-no">No</button>
+    </div>
   </div>
 </div>
 

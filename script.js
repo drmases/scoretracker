@@ -5,7 +5,7 @@
   var HISTORY_KEY = 'scoretracker.history';
 
   var PLAYER_COLORS = [
-    '#e8352f', '#f2891e', '#3fa64c', '#1f6fb2',
+    '#e8352f', '#f2c41e', '#3fa64c', '#1f6fb2',
     '#7c3fc4', '#d13c8e', '#1fa898', '#c7a419'
   ];
 
@@ -64,6 +64,11 @@
     return PLAYER_COLORS[state.players.length % PLAYER_COLORS.length];
   }
 
+  function nameFontSize(count) {
+    if (count <= 5) return 2.5;
+    return Math.max(2.5 - (count - 5) * 0.25, 1.3);
+  }
+
   // ---------- DOM refs ----------
   var appEl = document.getElementById('app');
   var gameNameInput = document.getElementById('gameNameInput');
@@ -86,6 +91,12 @@
   var historyCloseBtn = document.getElementById('historyCloseBtn');
   var historyListEl = document.getElementById('historyList');
 
+  var confirmOverlay = document.getElementById('confirmOverlay');
+  var confirmModal = document.getElementById('confirmModal');
+  var confirmMessage = document.getElementById('confirmMessage');
+  var confirmYesBtn = document.getElementById('confirmYes');
+  var confirmNoBtn = document.getElementById('confirmNo');
+
   // ---------- rendering ----------
   function render() {
     gameNameInput.value = state.gameName;
@@ -94,7 +105,9 @@
 
     var displayRound = state.roundsEnabled ? state.activeRound : 0;
     roundNumberEl.textContent = String(displayRound + 1);
-    roundMinusBtn.disabled = displayRound <= 0;
+    roundMinusBtn.disabled = state.roundsCreated <= 1;
+
+    appEl.style.setProperty('--player-name-size', nameFontSize(state.players.length) + 'rem');
 
     playerRowsEl.innerHTML = '';
     state.players.forEach(function (player, idx) {
@@ -239,20 +252,34 @@
 
   function roundMinus() {
     if (!state.roundsEnabled) return;
-    if (state.activeRound > 0) {
-      state.activeRound -= 1;
+    if (state.roundsCreated <= 1) return;
+    showConfirm('Delete Round?', function () {
+      state.roundsCreated -= 1;
+      state.players.forEach(function (p) { p.rounds.pop(); });
+      if (state.activeRound > state.roundsCreated - 1) {
+        state.activeRound = state.roundsCreated - 1;
+      }
       render();
-    }
+    }, function () {
+      if (state.activeRound > 0) {
+        state.activeRound -= 1;
+        render();
+      }
+    });
   }
 
   // ---------- drawer ----------
   function openDrawer() {
     drawer.classList.add('open');
     drawerOverlay.classList.add('open');
+    drawerTab.classList.add('open');
+    drawerTab.setAttribute('aria-label', 'Close menu');
   }
   function closeDrawer() {
     drawer.classList.remove('open');
     drawerOverlay.classList.remove('open');
+    drawerTab.classList.remove('open');
+    drawerTab.setAttribute('aria-label', 'Open menu');
   }
 
   function openHistoryPanel() {
@@ -265,6 +292,37 @@
     historyPanel.classList.remove('open');
     historyOverlay.classList.remove('open');
   }
+
+  // ---------- confirm modal ----------
+  var confirmYesHandler = null;
+  var confirmNoHandler = null;
+
+  function showConfirm(message, onYes, onNo) {
+    confirmMessage.textContent = message;
+    confirmYesHandler = onYes;
+    confirmNoHandler = onNo || null;
+    confirmModal.classList.add('open');
+    confirmOverlay.classList.add('open');
+  }
+
+  function closeConfirm() {
+    confirmModal.classList.remove('open');
+    confirmOverlay.classList.remove('open');
+    confirmYesHandler = null;
+    confirmNoHandler = null;
+  }
+
+  confirmYesBtn.addEventListener('click', function () {
+    var handler = confirmYesHandler;
+    closeConfirm();
+    if (handler) handler();
+  });
+  confirmNoBtn.addEventListener('click', function () {
+    var handler = confirmNoHandler;
+    closeConfirm();
+    if (handler) handler();
+  });
+  confirmOverlay.addEventListener('click', closeConfirm);
 
   // ---------- actions ----------
   function doClear() {
@@ -371,7 +429,13 @@
   roundPlusBtn.addEventListener('click', roundPlus);
   roundMinusBtn.addEventListener('click', roundMinus);
 
-  drawerTab.addEventListener('click', openDrawer);
+  drawerTab.addEventListener('click', function () {
+    if (drawer.classList.contains('open')) {
+      closeDrawer();
+    } else {
+      openDrawer();
+    }
+  });
   drawerOverlay.addEventListener('click', closeDrawer);
   clearBtn.addEventListener('click', doClear);
   saveBtn.addEventListener('click', doSave);
