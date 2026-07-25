@@ -179,34 +179,7 @@
 
     playerRowsEl.innerHTML = '';
     getDisplayList().forEach(function (player, idx) {
-      var rowEl = renderPlayerRow(player, idx);
-      playerRowsEl.appendChild(rowEl);
-      // now that the strip is attached and laid out, scroll it so the
-      // active round's chip is fully in view (it may be the newest, off
-      // the end, or an earlier one being reviewed after stepping back)
-      var historyWrap = rowEl.querySelector('.round-history');
-      var activeChip = historyWrap && historyWrap.querySelector('.round-chip.active');
-      if (activeChip) {
-        var target = activeChip.offsetLeft + activeChip.offsetWidth - historyWrap.clientWidth;
-        historyWrap.scrollLeft = Math.max(0, target);
-      }
-      // portrait's chip strip should start right after the edit button,
-      // but the two live in separate columns (name column vs round
-      // column) whose widths vary with content, so a fixed CSS offset
-      // can't reach across that boundary correctly -- measure it instead
-      if (historyWrap && window.matchMedia('(orientation: portrait)').matches) {
-        var colRoundEl = rowEl.querySelector('.col-round');
-        var editBtnEl = rowEl.querySelector('.edit-player-btn');
-        if (colRoundEl && editBtnEl) {
-          var colRoundRect = colRoundEl.getBoundingClientRect();
-          var editRect = editBtnEl.getBoundingClientRect();
-          // relative to col-round's own box, which may start well after
-          // (or, for short names, before) the edit button's right edge --
-          // a negative value here is expected and correctly pulls the
-          // strip left so it still starts right after the button
-          historyWrap.style.left = (editRect.right - colRoundRect.left + 6) + 'px';
-        }
-      }
+      playerRowsEl.appendChild(renderPlayerRow(player, idx));
     });
 
     saveSession();
@@ -267,17 +240,7 @@
     var historyWrap = document.createElement('div');
     historyWrap.className = 'round-history';
     var activeRound = state.roundsEnabled ? state.activeRound : 0;
-    // portrait's chip strip is a single line with limited width (no
-    // reliable way to auto-scroll it into view), so cap how many we
-    // build and keep the active one inside the window; landscape has
-    // room to wrap to multiple lines, so it renders every round
-    var isPortrait = window.matchMedia('(orientation: portrait)').matches;
-    var maxVisibleChips = isPortrait ? 12 : Infinity;
-    var chipStart = 0;
-    if (player.rounds.length > maxVisibleChips) {
-      chipStart = Math.max(0, Math.min(player.rounds.length - maxVisibleChips, activeRound - Math.floor(maxVisibleChips / 2)));
-    }
-    for (var r = chipStart; r < player.rounds.length; r++) {
+    for (var r = 0; r < player.rounds.length; r++) {
       var chip = document.createElement('span');
       chip.className = 'round-chip' + (r === activeRound ? ' active' : '');
       chip.textContent = String(player.rounds[r]);
