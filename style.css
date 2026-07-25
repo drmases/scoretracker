@@ -748,7 +748,11 @@ html, body {
    stays visible without needing to scroll to find it */
 @media (max-width: 700px) {
   .row {
-    grid-template-columns: minmax(90px, 2.4fr) minmax(60px, 1.2fr) minmax(90px, 1.6fr) minmax(56px, 1fr);
+    /* column 4 is sized to its own content (the wrapped "Total"/"Score"
+       label, or a wider score value) instead of grabbing a flexible
+       share, so columns 1-3 keep the room that would otherwise be
+       wasted as empty space around the total number */
+    grid-template-columns: minmax(90px, 2.4fr) minmax(60px, 1.2fr) minmax(102px, 1.6fr) minmax(50px, min-content);
     min-height: 32px;
   }
   #app.rounds-off .row { grid-template-columns: minmax(140px, 2.4fr) minmax(110px, 1.6fr); }
@@ -759,6 +763,10 @@ html, body {
   .round-stepper-label { font-size: 0.85rem; }
   .round-number { font-size: 0.85rem; }
 
+  /* buttons and the gaps between them shrink together with the text,
+     so the stepper keeps fitting its column instead of overflowing
+     past the edit button/round-chip sizes into the row's edge */
+  .score-stepper { gap: 8px; }
   .score-step-btn { width: 24px; height: 24px; font-size: 0.85rem; }
   .edit-player-btn { width: 24px; height: 24px; font-size: 0.85rem; }
   .round-chip { min-width: 16px; padding: 1px 3px; font-size: 0.6rem; }
@@ -766,7 +774,7 @@ html, body {
 
 @media (max-width: 420px) {
   .row {
-    grid-template-columns: minmax(70px, 2.4fr) minmax(46px, 1.2fr) minmax(70px, 1.6fr) minmax(46px, 1fr);
+    grid-template-columns: minmax(70px, 2.4fr) minmax(46px, 1.2fr) minmax(84px, 1.6fr) minmax(40px, min-content);
   }
   #app.rounds-off .row { grid-template-columns: minmax(110px, 2.4fr) minmax(90px, 1.6fr); }
 
@@ -774,6 +782,7 @@ html, body {
   .score-value { font-size: 1.3rem; }
   .total-value { font-size: 1.3rem; }
 
+  .score-stepper { gap: 6px; }
   .score-step-btn { width: 20px; height: 20px; font-size: 0.75rem; }
   .edit-player-btn { width: 20px; height: 20px; font-size: 0.75rem; }
   .round-chip { min-width: 14px; padding: 1px 2px; font-size: 0.55rem; }
