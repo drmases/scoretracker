@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#1a1a2e"/>
+  <text x="256" y="330" font-family="'Segoe UI', system-ui, -apple-system, Arial, sans-serif" font-weight="800" font-size="300" fill="#f5f5f0" text-anchor="middle">S</text>
+  <g>
+    <circle cx="136" cy="420" r="26" fill="#e8352f"/>
+    <circle cx="206" cy="420" r="26" fill="#f2c41e"/>
+    <circle cx="276" cy="420" r="26" fill="#3fa64c"/>
+    <circle cx="346" cy="420" r="26" fill="#1f6fb2"/>
+  </g>
+</svg>

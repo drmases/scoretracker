@@ -15,6 +15,8 @@
       gameName: '',
       roundsEnabled: true,
       colorsEnabled: true,
+      sortMode: 'insertion',
+      randomOrder: [],
       roundsCreated: 1,
       activeRound: 0,
       players: []
@@ -75,6 +77,48 @@
     return Math.max(2.5 - (count - 5) * 0.25, 1.3);
   }
 
+  function findPlayerIndexById(id) {
+    return state.players.findIndex(function (p) { return p.id === id; });
+  }
+
+  function syncRandomOrder() {
+    var ids = state.players.map(function (p) { return p.id; });
+    state.randomOrder = state.randomOrder.filter(function (id) { return ids.indexOf(id) !== -1; });
+    ids.forEach(function (id) {
+      if (state.randomOrder.indexOf(id) === -1) state.randomOrder.push(id);
+    });
+  }
+
+  function shuffleRandomOrder() {
+    var ids = state.players.map(function (p) { return p.id; });
+    for (var i = ids.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = ids[i]; ids[i] = ids[j]; ids[j] = tmp;
+    }
+    state.randomOrder = ids;
+  }
+
+  function getDisplayList() {
+    if (state.sortMode === 'leader') {
+      return state.players.slice().sort(function (a, b) { return displayTotal(b) - displayTotal(a); });
+    }
+    if (state.sortMode === 'random') {
+      syncRandomOrder();
+      return state.randomOrder.map(function (id) {
+        return state.players[findPlayerIndexById(id)];
+      });
+    }
+    return state.players;
+  }
+
+  function setSortMode(mode) {
+    if (mode === 'random') {
+      shuffleRandomOrder();
+    }
+    state.sortMode = mode;
+    render();
+  }
+
   // ---------- DOM refs ----------
   var appEl = document.getElementById('app');
   var gameNameInput = document.getElementById('gameNameInput');
@@ -92,6 +136,9 @@
   var clearPlayersBtn = document.getElementById('clearPlayersBtn');
   var saveBtn = document.getElementById('saveBtn');
   var historyBtn = document.getElementById('historyBtn');
+  var sortLeaderBtn = document.getElementById('sortLeaderBtn');
+  var sortPlayerOrderBtn = document.getElementById('sortPlayerOrderBtn');
+  var sortRandomBtn = document.getElementById('sortRandomBtn');
   var roundsToggleInput = document.getElementById('roundsToggleInput');
   var colorsToggleInput = document.getElementById('colorsToggleInput');
 
@@ -120,6 +167,9 @@
     appEl.classList.toggle('colors-off', !state.colorsEnabled);
     roundsToggleInput.checked = state.roundsEnabled;
     colorsToggleInput.checked = state.colorsEnabled;
+    sortLeaderBtn.classList.toggle('active-state', state.sortMode === 'leader');
+    sortPlayerOrderBtn.classList.toggle('active-state', state.sortMode === 'insertion');
+    sortRandomBtn.classList.toggle('active-state', state.sortMode === 'random');
 
     var displayRound = state.roundsEnabled ? state.activeRound : 0;
     roundNumberEl.textContent = String(displayRound + 1);
@@ -128,7 +178,7 @@
     appEl.style.setProperty('--player-name-size', nameFontSize(state.players.length) + 'rem');
 
     playerRowsEl.innerHTML = '';
-    state.players.forEach(function (player, idx) {
+    getDisplayList().forEach(function (player, idx) {
       playerRowsEl.appendChild(renderPlayerRow(player, idx));
     });
 
@@ -172,7 +222,7 @@
     editBtn.textContent = '✎';
     editBtn.setAttribute('aria-label', 'Edit player');
     editBtn.addEventListener('click', function () {
-      openPlayerEdit(idx);
+      openPlayerEdit(player.id);
     });
 
     nameRow.appendChild(nameInput);
@@ -345,11 +395,11 @@
   confirmOverlay.addEventListener('click', closeConfirm);
 
   // ---------- player edit modal ----------
-  function renderColorSwatches(idx) {
-    var player = state.players[idx];
+  function renderColorSwatches(id) {
+    var player = state.players[findPlayerIndexById(id)];
     colorSwatchGrid.innerHTML = '';
     PLAYER_COLORS.forEach(function (color) {
-      var takenByOther = state.players.some(function (p, i) { return i !== idx && p.color === color; });
+      var takenByOther = state.players.some(function (p) { return p.id !== id && p.color === color; });
       var swatch = document.createElement('button');
       swatch.type = 'button';
       swatch.className = 'color-swatch' + (color === player.color ? ' selected' : '') + (takenByOther ? ' taken' : '');
@@ -365,13 +415,15 @@
     });
   }
 
-  function openPlayerEdit(idx) {
+  function openPlayerEdit(id) {
+    var idx = findPlayerIndexById(id);
     var player = state.players[idx];
     playerEditTitle.textContent = player.name.trim() || ('Player ' + (idx + 1));
-    renderColorSwatches(idx);
+    renderColorSwatches(id);
     playerEditDeleteBtn.onclick = function () {
       showConfirm('Delete this player?', function () {
-        state.players.splice(idx, 1);
+        var i = findPlayerIndexById(id);
+        if (i !== -1) state.players.splice(i, 1);
         render();
         closePlayerEdit();
       });
@@ -393,9 +445,11 @@
     showConfirm('Clear players and scores?', function () {
       var roundsEnabled = state.roundsEnabled;
       var colorsEnabled = state.colorsEnabled;
+      var sortMode = state.sortMode;
       state = defaultSession();
       state.roundsEnabled = roundsEnabled;
       state.colorsEnabled = colorsEnabled;
+      state.sortMode = sortMode;
       render();
       closeDrawer();
     });
@@ -424,7 +478,7 @@
       id: Date.now() + '-' + Math.random().toString(36).slice(2, 7),
       savedAt: new Date().toISOString(),
       gameName: state.gameName.trim() || 'Untitled game',
-      players: state.players.map(function (p, idx) {
+      players: getDisplayList().map(function (p, idx) {
         return {
           name: p.name.trim() || ('Player ' + (idx + 1)),
           color: p.color,
@@ -534,6 +588,9 @@
   clearPlayersBtn.addEventListener('click', doClearPlayers);
   saveBtn.addEventListener('click', doSave);
   historyBtn.addEventListener('click', openHistoryPanel);
+  sortLeaderBtn.addEventListener('click', function () { setSortMode('leader'); });
+  sortPlayerOrderBtn.addEventListener('click', function () { setSortMode('insertion'); });
+  sortRandomBtn.addEventListener('click', function () { setSortMode('random'); });
   roundsToggleInput.addEventListener('change', doToggleRounds);
   colorsToggleInput.addEventListener('change', doToggleColors);
 

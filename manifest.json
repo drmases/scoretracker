@@ -1,0 +1,13 @@
+{
+  "name": "Scoretracker",
+  "short_name": "Scoretracker",
+  "start_url": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#0f0f1a",
+  "theme_color": "#0f0f1a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "icon.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

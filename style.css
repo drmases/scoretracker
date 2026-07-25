@@ -33,6 +33,7 @@ html, body {
   position: relative;
   height: 100vh;
   height: 100dvh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 #board {
@@ -425,6 +426,10 @@ html, body {
   text-align: left;
 }
 .drawer-item:active { background: rgba(255,255,255,0.16); }
+.drawer-item.active-state {
+  background: rgba(255,255,255,0.14);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.3);
+}
 
 .switch-row {
   display: flex;
