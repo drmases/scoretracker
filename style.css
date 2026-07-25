@@ -756,20 +756,30 @@ html, body {
   }
   .player-name-input { align-self: stretch; }
 
-  /* round-history chips move onto that same second line, right-aligned
-     under the score column instead of their own column */
+  /* score/round circles shrink to match the smaller portrait text */
+  .score-step-btn { width: 24px; height: 24px; font-size: 0.85rem; }
+
+  /* round-history never wraps to a 2nd line, so the name/score/total
+     baseline never shifts as more rounds are added */
+  .round-history { flex-wrap: nowrap; overflow-x: auto; }
+
+  /* Name+edit form one content block, Score+chips form another; both
+     blocks are centered together via two auto rows sandwiched between
+     equal flexible spacers (so extra space goes above+below evenly,
+     no matter how tall the row gets). Total Score spans all 4 tracks
+     with align-self:stretch so it fills the same height as the color
+     block, independent of that centering. */
   .player-row {
     grid-template-columns: minmax(130px, 2.6fr) minmax(145px, 1.8fr) minmax(60px, 1fr);
-    grid-template-rows: auto auto;
-    align-content: start;
+    grid-template-rows: 1fr auto auto 1fr;
   }
-  .player-row .col-game { grid-column: 1; grid-row: 1 / 3; align-self: start; }
-  .player-row .player-name-wrap { justify-content: flex-start; }
-  .player-row .col-round { grid-column: 2; grid-row: 2; align-self: start; padding-top: 0; }
-  .player-row .col-score { grid-column: 2; grid-row: 1; }
+  .player-row .col-game { grid-column: 1; grid-row: 2 / 4; align-self: center; }
+  .player-row .player-name-wrap { justify-content: center; }
+  .player-row .col-round { grid-column: 2; grid-row: 3; align-self: center; padding-top: 0; }
+  .player-row .col-score { grid-column: 2; grid-row: 2; }
   .player-row .score-stepper { justify-content: flex-end; }
-  .player-row .col-total { grid-column: 3; grid-row: 1 / 3; align-self: center; }
+  .player-row .col-total { grid-column: 3; grid-row: 1 / 5; align-self: stretch; }
 
   #app.rounds-off .player-row { grid-template-columns: minmax(140px, 2.4fr) minmax(110px, 1.6fr); }
-  #app.rounds-off .player-row .col-score { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+  #app.rounds-off .player-row .col-score { grid-column: 2; grid-row: 2 / 4; align-self: center; }
 }
