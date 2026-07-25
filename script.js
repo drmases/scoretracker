@@ -248,6 +248,7 @@
     }
     roundCol.appendChild(historyWrap);
     row.appendChild(roundCol);
+    historyWrap.scrollLeft = historyWrap.scrollWidth;
 
     // Active-round score stepper column
     var scoreCol = document.createElement('div');

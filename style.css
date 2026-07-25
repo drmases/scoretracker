@@ -748,38 +748,40 @@ html, body {
      "2 players" height and keep it pinned to the top */
   .player-row { max-height: 50%; }
 
-  /* edit button moves below the name, left-aligned with it */
-  .player-name-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 3px;
-  }
-  .player-name-input { align-self: stretch; }
-
   /* score/round circles shrink to match the smaller portrait text */
   .score-step-btn { width: 24px; height: 24px; font-size: 0.85rem; }
+  .edit-player-btn { width: 24px; height: 24px; font-size: 0.85rem; }
+  .round-chip { min-width: 16px; padding: 1px 3px; font-size: 0.6rem; }
 
   /* round-history never wraps to a 2nd line, so the name/score/total
-     baseline never shifts as more rounds are added */
+     baseline never shifts as more rounds are added; scrolled to the
+     end (in JS) so the newest/active round is always visible */
   .round-history { flex-wrap: nowrap; overflow-x: auto; }
 
-  /* Name+edit form one content block, Score+chips form another; both
-     blocks are centered together via two auto rows sandwiched between
-     equal flexible spacers (so extra space goes above+below evenly,
-     no matter how tall the row gets). Total Score spans all 4 tracks
-     with align-self:stretch so it fills the same height as the color
-     block, independent of that centering. */
+  /* Single simple row again: every column stretches to the row's full
+     height (Name/Score/Total all centered at the exact same middle,
+     matching baselines). Edit + chips are pulled out of that centering
+     with position:absolute and dropped a fixed distance below it, so
+     they sit on their own "second line" without shifting where the
+     name/score/total line centers. */
   .player-row {
     grid-template-columns: minmax(130px, 2.6fr) minmax(145px, 1.8fr) minmax(60px, 1fr);
-    grid-template-rows: 1fr auto auto 1fr;
   }
-  .player-row .col-game { grid-column: 1; grid-row: 2 / 4; align-self: center; }
-  .player-row .player-name-wrap { justify-content: center; }
-  .player-row .col-round { grid-column: 2; grid-row: 3; align-self: center; padding-top: 0; }
-  .player-row .col-score { grid-column: 2; grid-row: 2; }
+  .player-row .col-game { grid-column: 1; grid-row: 1; position: relative; }
+  .player-row .player-name-wrap { height: 100%; justify-content: center; }
+  .player-row .edit-player-btn { position: absolute; top: calc(50% + 21px); left: 16px; }
+
+  .player-row .col-round { grid-column: 2; grid-row: 1; position: relative; }
+  .player-row .round-history {
+    position: absolute;
+    top: calc(50% + 21px);
+    right: 6px;
+    left: 6px;
+    width: auto;
+  }
+  .player-row .col-score { grid-column: 2; grid-row: 1; }
   .player-row .score-stepper { justify-content: flex-end; }
-  .player-row .col-total { grid-column: 3; grid-row: 1 / 5; align-self: stretch; }
+  .player-row .col-total { grid-column: 3; grid-row: 1; align-self: stretch; }
 
   #app.rounds-off .player-row { grid-template-columns: minmax(140px, 2.4fr) minmax(110px, 1.6fr); }
-  #app.rounds-off .player-row .col-score { grid-column: 2; grid-row: 2 / 4; align-self: center; }
 }
