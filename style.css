@@ -737,9 +737,39 @@ html, body {
 
 /* app is designed for landscape; keep portrait usable rather than cramped */
 @media (orientation: portrait) {
-  .row { grid-template-columns: minmax(140px, 3fr) minmax(50px, 0.8fr) minmax(100px, 1.6fr) minmax(60px, 1fr); }
-  #app.rounds-off .row { grid-template-columns: minmax(140px, 2.4fr) minmax(110px, 1.6fr); }
+  .header-row { grid-template-columns: minmax(140px, 3fr) minmax(50px, 0.8fr) minmax(100px, 1.6fr) minmax(60px, 1fr); }
+  #app.rounds-off .header-row { grid-template-columns: minmax(140px, 2.4fr) minmax(110px, 1.6fr); }
+
   .player-name-input { font-size: min(var(--player-name-size, 2.5rem), 1.6rem); }
   .score-value { font-size: 1.6rem; }
   .total-value { font-size: 1.6rem; }
+
+  /* single player row should never fill the whole screen: cap it at the
+     "2 players" height and keep it pinned to the top */
+  .player-row { max-height: 50%; }
+
+  /* edit button moves below the name, left-aligned with it */
+  .player-name-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+  .player-name-input { align-self: stretch; }
+
+  /* round-history chips move onto that same second line, right-aligned
+     under the score column instead of their own column */
+  .player-row {
+    grid-template-columns: minmax(130px, 2.6fr) minmax(145px, 1.8fr) minmax(60px, 1fr);
+    grid-template-rows: auto auto;
+    align-content: start;
+  }
+  .player-row .col-game { grid-column: 1; grid-row: 1 / 3; align-self: start; }
+  .player-row .player-name-wrap { justify-content: flex-start; }
+  .player-row .col-round { grid-column: 2; grid-row: 2; align-self: start; padding-top: 0; }
+  .player-row .col-score { grid-column: 2; grid-row: 1; }
+  .player-row .score-stepper { justify-content: flex-end; }
+  .player-row .col-total { grid-column: 3; grid-row: 1 / 3; align-self: center; }
+
+  #app.rounds-off .player-row { grid-template-columns: minmax(140px, 2.4fr) minmax(110px, 1.6fr); }
+  #app.rounds-off .player-row .col-score { grid-column: 2; grid-row: 1 / 3; align-self: center; }
 }
