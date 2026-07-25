@@ -179,19 +179,18 @@
 
     playerRowsEl.innerHTML = '';
     getDisplayList().forEach(function (player, idx) {
-      playerRowsEl.appendChild(renderPlayerRow(player, idx));
+      var rowEl = renderPlayerRow(player, idx);
+      playerRowsEl.appendChild(rowEl);
+      // now that the strip is attached and laid out, scroll it so the
+      // active round's chip is fully in view (it may be the newest, off
+      // the end, or an earlier one being reviewed after stepping back)
+      var historyWrap = rowEl.querySelector('.round-history');
+      var activeChip = historyWrap && historyWrap.querySelector('.round-chip.active');
+      if (activeChip) {
+        var target = activeChip.offsetLeft + activeChip.offsetWidth - historyWrap.clientWidth;
+        historyWrap.scrollLeft = Math.max(0, target);
+      }
     });
-
-    // scroll each round-history strip to the newest round now that it's
-    // attached to the document; deferred a frame because some browsers
-    // don't apply a scroll position set in the same tick as the layout
-    // change that created the overflow
-    setTimeout(function () {
-      playerRowsEl.querySelectorAll('.round-history').forEach(function (el) {
-        el.scrollLeft = el.scrollWidth;
-        el.scrollTop = el.scrollHeight;
-      });
-    }, 0);
 
     saveSession();
   }
@@ -251,10 +250,12 @@
     var historyWrap = document.createElement('div');
     historyWrap.className = 'round-history';
     var activeRound = state.roundsEnabled ? state.activeRound : 0;
-    // only render a window of chips around the active round: the strip
-    // has limited space (no reliable way to auto-scroll it into view),
-    // so cap how many we build and keep the active one inside the window
-    var maxVisibleChips = 14;
+    // portrait's chip strip is a single line with limited width (no
+    // reliable way to auto-scroll it into view), so cap how many we
+    // build and keep the active one inside the window; landscape has
+    // room to wrap to multiple lines, so it renders every round
+    var isPortrait = window.matchMedia('(orientation: portrait)').matches;
+    var maxVisibleChips = isPortrait ? 12 : Infinity;
     var chipStart = 0;
     if (player.rounds.length > maxVisibleChips) {
       chipStart = Math.max(0, Math.min(player.rounds.length - maxVisibleChips, activeRound - Math.floor(maxVisibleChips / 2)));

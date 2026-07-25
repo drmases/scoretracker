@@ -751,7 +751,7 @@ html, body {
   /* score/round circles shrink to match the smaller portrait text */
   .score-step-btn { width: 24px; height: 24px; font-size: 0.85rem; }
   .edit-player-btn { width: 24px; height: 24px; font-size: 0.85rem; }
-  .round-chip { min-width: 16px; padding: 1px 3px; font-size: 0.6rem; }
+  .round-chip { min-width: 16px; padding: 1px 3px; font-size: 0.6rem; flex-shrink: 0; }
 
   /* Single simple row again: every column stretches to the row's full
      height (Name/Score/Total all centered at the exact same middle,
@@ -767,21 +767,20 @@ html, body {
   .player-row .edit-player-btn { position: absolute; top: calc(50% + 21px); left: 16px; }
 
   .player-row .col-round { grid-column: 2; grid-row: 1; position: relative; }
-  /* wraps to multiple lines instead of scrolling sideways (which was
-     hiding newly-added rounds), but stays capped at a fixed height so
-     it never grows the row and shifts the name/score/total baseline;
-     scrolls vertically (in JS) to keep the newest round in view */
+  /* single line, sitting between the edit button and the score stepper
+     (same left-to-right order as landscape's separate columns); JS caps
+     how many rounds it builds so the active one always fits without
+     needing to scroll */
   .player-row .round-history {
     position: absolute;
     top: calc(50% + 21px);
+    left: 46px;
     right: 6px;
-    left: 6px;
     width: auto;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    max-height: 34px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
   .player-row .col-score { grid-column: 2; grid-row: 1; }
   .player-row .score-stepper { justify-content: flex-end; }
