@@ -751,8 +751,12 @@ html, body {
     /* column 4 is sized to its own content (the wrapped "Total"/"Score"
        label, or a wider score value) instead of grabbing a flexible
        share, so columns 1-3 keep the room that would otherwise be
-       wasted as empty space around the total number */
-    grid-template-columns: minmax(90px, 2.4fr) minmax(60px, 1.2fr) minmax(102px, 1.6fr) minmax(50px, min-content);
+       wasted as empty space around the total number. 54px is "Score"'s
+       own rendered width plus the column's padding -- the column never
+       goes narrower than that, so it (and the score column next to it)
+       stay the same width on every row, which is what keeps the round
+       number and score value centered on the same line */
+    grid-template-columns: minmax(90px, 2.4fr) minmax(60px, 1.2fr) minmax(102px, 1.6fr) minmax(54px, min-content);
     min-height: 32px;
   }
   #app.rounds-off .row { grid-template-columns: minmax(140px, 2.4fr) minmax(110px, 1.6fr); }
@@ -765,16 +769,18 @@ html, body {
 
   /* buttons and the gaps between them shrink together with the text,
      so the stepper keeps fitting its column instead of overflowing
-     past the edit button/round-chip sizes into the row's edge */
-  .score-stepper { gap: 8px; }
-  .score-step-btn { width: 24px; height: 24px; font-size: 0.85rem; }
+     past the edit button/round-chip sizes into the row's edge; the
+     header's round stepper matches the player rows' score stepper so
+     both rows' numbers land in the same spot */
+  .score-stepper, .round-stepper { gap: 8px; }
+  .score-step-btn, .step-btn { width: 24px; height: 24px; font-size: 0.85rem; }
   .edit-player-btn { width: 24px; height: 24px; font-size: 0.85rem; }
   .round-chip { min-width: 16px; padding: 1px 3px; font-size: 0.6rem; }
 }
 
 @media (max-width: 420px) {
   .row {
-    grid-template-columns: minmax(70px, 2.4fr) minmax(46px, 1.2fr) minmax(84px, 1.6fr) minmax(40px, min-content);
+    grid-template-columns: minmax(70px, 2.4fr) minmax(46px, 1.2fr) minmax(84px, 1.6fr) minmax(54px, min-content);
   }
   #app.rounds-off .row { grid-template-columns: minmax(110px, 2.4fr) minmax(90px, 1.6fr); }
 
@@ -782,8 +788,8 @@ html, body {
   .score-value { font-size: 1.3rem; }
   .total-value { font-size: 1.3rem; }
 
-  .score-stepper { gap: 6px; }
-  .score-step-btn { width: 20px; height: 20px; font-size: 0.75rem; }
+  .score-stepper, .round-stepper { gap: 6px; }
+  .score-step-btn, .step-btn { width: 20px; height: 20px; font-size: 0.75rem; }
   .edit-player-btn { width: 20px; height: 20px; font-size: 0.75rem; }
   .round-chip { min-width: 14px; padding: 1px 2px; font-size: 0.55rem; }
 }
