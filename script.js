@@ -190,6 +190,23 @@
         var target = activeChip.offsetLeft + activeChip.offsetWidth - historyWrap.clientWidth;
         historyWrap.scrollLeft = Math.max(0, target);
       }
+      // portrait's chip strip should start right after the edit button,
+      // but the two live in separate columns (name column vs round
+      // column) whose widths vary with content, so a fixed CSS offset
+      // can't reach across that boundary correctly -- measure it instead
+      if (historyWrap && window.matchMedia('(orientation: portrait)').matches) {
+        var colRoundEl = rowEl.querySelector('.col-round');
+        var editBtnEl = rowEl.querySelector('.edit-player-btn');
+        if (colRoundEl && editBtnEl) {
+          var colRoundRect = colRoundEl.getBoundingClientRect();
+          var editRect = editBtnEl.getBoundingClientRect();
+          // relative to col-round's own box, which may start well after
+          // (or, for short names, before) the edit button's right edge --
+          // a negative value here is expected and correctly pulls the
+          // strip left so it still starts right after the button
+          historyWrap.style.left = (editRect.right - colRoundRect.left + 6) + 'px';
+        }
+      }
     });
 
     saveSession();
