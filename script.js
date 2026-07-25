@@ -182,6 +182,17 @@
       playerRowsEl.appendChild(renderPlayerRow(player, idx));
     });
 
+    // scroll each round-history strip to the newest round now that it's
+    // attached to the document; deferred a frame because some browsers
+    // don't apply a scroll position set in the same tick as the layout
+    // change that created the overflow
+    setTimeout(function () {
+      playerRowsEl.querySelectorAll('.round-history').forEach(function (el) {
+        el.scrollLeft = el.scrollWidth;
+        el.scrollTop = el.scrollHeight;
+      });
+    }, 0);
+
     saveSession();
   }
 
@@ -240,7 +251,15 @@
     var historyWrap = document.createElement('div');
     historyWrap.className = 'round-history';
     var activeRound = state.roundsEnabled ? state.activeRound : 0;
-    for (var r = 0; r < player.rounds.length; r++) {
+    // only render a window of chips around the active round: the strip
+    // has limited space (no reliable way to auto-scroll it into view),
+    // so cap how many we build and keep the active one inside the window
+    var maxVisibleChips = 14;
+    var chipStart = 0;
+    if (player.rounds.length > maxVisibleChips) {
+      chipStart = Math.max(0, Math.min(player.rounds.length - maxVisibleChips, activeRound - Math.floor(maxVisibleChips / 2)));
+    }
+    for (var r = chipStart; r < player.rounds.length; r++) {
       var chip = document.createElement('span');
       chip.className = 'round-chip' + (r === activeRound ? ' active' : '');
       chip.textContent = String(player.rounds[r]);
@@ -248,7 +267,6 @@
     }
     roundCol.appendChild(historyWrap);
     row.appendChild(roundCol);
-    historyWrap.scrollLeft = historyWrap.scrollWidth;
 
     // Active-round score stepper column
     var scoreCol = document.createElement('div');
