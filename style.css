@@ -134,6 +134,7 @@ html, body {
 .step-btn {
   width: 22px;
   height: 22px;
+  flex-shrink: 0;
   border-radius: 50%;
   border: none;
   background: rgba(255,255,255,0.18);
@@ -242,6 +243,7 @@ html, body {
 .score-step-btn {
   width: 34px;
   height: 34px;
+  flex-shrink: 0;
   border-radius: 50%;
   border: none;
   background: rgba(0,0,0,0.2);
@@ -731,4 +733,13 @@ html, body {
   .score-value { font-size: 1.9rem; }
   .total-value { font-size: 1.9rem; }
   .add-player-btn { padding: 6px 14px; }
+}
+
+/* app is designed for landscape; keep portrait usable rather than cramped */
+@media (orientation: portrait) {
+  .row { grid-template-columns: minmax(140px, 3fr) minmax(50px, 0.8fr) minmax(100px, 1.6fr) minmax(60px, 1fr); }
+  #app.rounds-off .row { grid-template-columns: minmax(140px, 2.4fr) minmax(110px, 1.6fr); }
+  .player-name-input { font-size: min(var(--player-name-size, 2.5rem), 1.6rem); }
+  .score-value { font-size: 1.6rem; }
+  .total-value { font-size: 1.6rem; }
 }
