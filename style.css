@@ -132,6 +132,7 @@ html, body {
 }
 
 .step-btn {
+  position: relative;
   width: 22px;
   height: 22px;
   flex-shrink: 0;
@@ -149,6 +150,19 @@ html, body {
   touch-action: manipulation;
 }
 .step-btn:active { background: rgba(255,255,255,0.35); }
+/* invisible, enlarged tap target: fullscreen home-screen PWAs on some
+   phones register touches a few pixels off from where the button is
+   painted, making the small circle hard to hit reliably -- this pads
+   the actual clickable region out to the round-stepper's own gap
+   without changing how the button looks */
+.step-btn::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  bottom: -8px;
+  left: -8px;
+}
 .step-btn:disabled { opacity: 0.35; cursor: default; }
 
 /* player rows */
